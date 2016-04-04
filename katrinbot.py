@@ -13,6 +13,8 @@ app.config.from_object('katrinbot_settings')
 URL = "https://vitko.info/katrinphotobot/wh/"
 WH_URL = app.config['URL'] + app.config['TOKEN']
 
+bot = Bot(app.config['BOT_TOKEN'])
+
 
 @app.route("/")
 def index():
@@ -63,7 +65,6 @@ if __name__ == "__main__":
         ch.setFormatter(formatter)
         app.logger.addHandler(ch)
         app.logger.setLevel(logging.DEBUG)
-    bot = Bot(app.config['BOT_TOKEN'])
     wh_result = bot.register_webhook(WH_URL)
     app.logger.debug(wh_result)
     app.run()
