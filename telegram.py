@@ -17,7 +17,6 @@ class Bot(object):
 
     def send_message(self, chat_id, text, reply_to_message_id=None, reply_markup=None):
         logger.warn("sending message to %s", chat_id)
-        print("reply_markup: %s" % reply_markup)
         payload = {
             "chat_id": chat_id,
             "text": text,
