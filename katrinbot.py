@@ -1,5 +1,12 @@
+# -*- coding: utf-8 -*-
 import logging
+
 from flask import Flask
+from flask import jsonify
+from flask import request
+
+from siteworker import get_latest, get_random
+from telegram import Bot
 
 app = Flask(__name__)
 app.config.from_object('katrinbot_settings')
@@ -12,14 +19,40 @@ def index():
     return "index page"
 
 
-@app.route("/wh/%s" % app.config['TOKEN'])
+def processwh(msg):
+    repl_url = "http://lene.pois.org.ru/Katrin/img/{}"
+
+    user = msg["message"]["from"]["id"]
+    message_id = msg["message"]["message_id"]
+    text = msg["message"]["text"]
+
+    if text in ["/start", "/help"]:
+        response = "Используй команды /random или /latest."
+    elif text == "/latest":
+        item = get_latest()
+        response = repl_url.format(item)
+    elif text == "/random":
+        item = get_random()
+        response = repl_url.format(item)
+    else:
+        response = "Шо?"
+
+    reply_markup = {"keyboard": [["/latest"], ["/random"]]}
+    bot.send_message(user, response, reply_markup=reply_markup)
+    return response
+
+
+@app.route("/wh/%s" % app.config['TOKEN'], methods=['GET', 'POST'])
 def webhook():
     app.logger.debug("got message")
-    return "ok"
+    if request.method == 'POST':
+        msg = request.get_json()
+        app.logger.debug(msg)
+        answer = processwh(msg)
+        return jsonify(status="ok", answer=answer)
+    else:
+        return jsonify(status="ok")
 
-
-def register_webhook():
-    return "hh"
 
 if __name__ == "__main__":
     if not app.debug:
@@ -29,5 +62,8 @@ if __name__ == "__main__":
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         ch.setFormatter(formatter)
         app.logger.addHandler(ch)
-        app.logger.setLevel(logging.INFO)
+        app.logger.setLevel(logging.DEBUG)
+    bot = Bot(app.config['BOT_TOKEN'])
+    wh_result = bot.register_webhook(WH_URL)
+    app.logger.debug(wh_result)
     app.run()
