@@ -44,7 +44,7 @@ def processwh(msg):
         if chat["type"] == "private":
             reply_markup = {"keyboard": [["/latest"], ["/random"]]}
         else:
-            reply_markup = None
+            reply_markup = {}
 
         bot.send_message(chat["id"], response, reply_markup=reply_markup)
     else:
