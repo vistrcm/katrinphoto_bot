@@ -31,10 +31,10 @@ def processwh(msg):
     if text is not None:
         if text in ["/start", "/help"]:
             response = "Используй команды /random или /latest."
-        elif text == "/latest":
+        elif text.startswith("/latest"):
             item = get_latest()
             response = repl_url.format(item)
-        elif text == "/random":
+        elif text.startswith("/random"):
             item = get_random()
             response = repl_url.format(item)
         else:
