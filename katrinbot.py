@@ -26,7 +26,7 @@ def processwh(msg):
 
     chat_id = msg["message"]["chat"]["id"]
     message_id = msg["message"]["message_id"]
-    text = msg["message"].get("text", default=None)
+    text = msg["message"].get("text", None)
 
     if text is not None:
         if text in ["/start", "/help"]:
