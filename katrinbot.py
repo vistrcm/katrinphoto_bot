@@ -24,23 +24,25 @@ def index():
 def processwh(msg):
     repl_url = "http://lene.pois.org.ru/Katrin/img/{}"
 
-    user = msg["message"]["from"]["id"]
+    chat_id = msg["message"]["chat"]["id"]
     message_id = msg["message"]["message_id"]
-    text = msg["message"]["text"]
+    text = msg["message"].get("text", default=None)
 
-    if text in ["/start", "/help"]:
-        response = "Используй команды /random или /latest."
-    elif text == "/latest":
-        item = get_latest()
-        response = repl_url.format(item)
-    elif text == "/random":
-        item = get_random()
-        response = repl_url.format(item)
+    if text is not None:
+        if text in ["/start", "/help"]:
+            response = "Используй команды /random или /latest."
+        elif text == "/latest":
+            item = get_latest()
+            response = repl_url.format(item)
+        elif text == "/random":
+            item = get_random()
+            response = repl_url.format(item)
+        else:
+            response = "Шо?"
+        reply_markup = {"keyboard": [["/latest"], ["/random"]]}
+        bot.send_message(chat_id, response, reply_markup=reply_markup)
     else:
-        response = "Шо?"
-
-    reply_markup = {"keyboard": [["/latest"], ["/random"]]}
-    bot.send_message(user, response, reply_markup=reply_markup)
+        response = "No text in the message."
     return response
 
 

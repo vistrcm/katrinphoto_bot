@@ -16,7 +16,7 @@ class Bot(object):
         return r.json()
 
     def send_message(self, chat_id, text, reply_to_message_id=None, reply_markup=None):
-        logger.warn("sending message to %s", chat_id)
+        logger.debug("sending message to %s", chat_id)
         payload = {
             "chat_id": chat_id,
             "text": text,
