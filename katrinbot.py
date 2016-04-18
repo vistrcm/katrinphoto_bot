@@ -24,7 +24,7 @@ def index():
 def processwh(msg):
     repl_url = "http://lene.pois.org.ru/Katrin/img/{}"
 
-    chat_id = msg["message"]["chat"]["id"]
+    chat = msg["message"]["chat"]
     message_id = msg["message"]["message_id"]
     text = msg["message"].get("text", None)
 
@@ -39,8 +39,14 @@ def processwh(msg):
             response = repl_url.format(item)
         else:
             response = "Шо?"
-        reply_markup = {"keyboard": [["/latest"], ["/random"]]}
-        bot.send_message(chat_id, response, reply_markup=reply_markup)
+
+        # set keyboard
+        if chat["type"] == "private":
+            reply_markup = {"keyboard": [["/latest"], ["/random"]]}
+        else:
+            reply_markup = None
+
+        bot.send_message(chat["id"], response, reply_markup=reply_markup)
     else:
         response = "No text in the message."
     return response
